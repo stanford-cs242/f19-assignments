@@ -1,0 +1,82 @@
+
+\documentclass[11pt]{article}
+
+\input{../../tex/defs.tex}
+
+% Useful syntax commands
+\newcommand{\jarr}[1]{\left[#1\right]}   % \jarr{x: y} = {x: y}
+\newcommand{\jobj}[1]{\left\{#1\right\}} % \jobj{1, 2} = [1, 2]
+\newcommand{\pgt}[1]{\, > {#1}}          % \pgt{1} = > 1
+\newcommand{\plt}[1]{\, < {#1}}          % \plt{2} = < 2
+\newcommand{\peq}[1]{\, = {#1}}          % \peq{3} = = 3
+\newcommand{\prop}[1]{\langle{#1}\rangle}% \prop{x} = <x>
+\newcommand{\matches}[2]{{#1}\sim{#2}}   % \matches{a}{b} = a ~ b
+\newcommand{\aeps}{\varepsilon}          % \apes = epsilon
+\newcommand{\akey}[2]{.{#1}\,{#2}}       % \akey{s}{a} = .s a
+\newcommand{\aidx}[2]{[#1]\,{#2}}        % \aidx{i}{a} = [i] a
+\newcommand{\apipe}[1]{\mid {#1}}        % \apipe{a} = | a
+
+% Other useful syntax commands:
+%
+% \msf{x} = x (not italicised)
+% \falset = false
+% \truet = true
+% \tnum = num
+% \tbool = bool
+% \tstr = str
+
+
+\begin{document}
+
+\hwtitle
+  {Assignment 1}
+  {Will Crichton (wcrichto)} %% REPLACE THIS WITH YOUR NAME/ID
+
+\problem{Problem 1}
+
+Part 1:
+
+\begin{alignat*}{1}
+\msf{Property}~p ::= \qamp \varepsilon \\
+\mid \qamp \ldots \\
+\\
+\msf{Schema}~\tau ::= \qamp \tnum \prop{p} \\
+\mid \qamp \ldots
+\end{alignat*}
+
+Part 2:
+
+% mathpar is the environment for writing inference rules. It takes care of
+% the spacing and line breaks automatically. Use "\\" in the premises to
+% space out multiple assumptions.
+\begin{mathpar}
+
+\ir{S-Bool-False}{\ }{\matches{\falset}{\tbool}}
+
+\ir{S-Bool-True}{\ }{\matches{\truet}{\tbool}}
+
+% Inference rules go here
+
+\end{mathpar}
+
+\problem{Problem 2}
+
+Part 1:
+
+\begin{mathpar}
+% Inference rules go here
+\end{mathpar}
+
+Part 2:
+
+\begin{mathpar}
+% Inference rules go here
+\end{mathpar}
+
+\textit{Accessor safety}: for all $a, j, \tau$, if $\matches{a}{\tau}$ and $\matches{j}{\tau}$, then there exists a $j'$ such that $\evals{(a, j)}{\aeps, j'}$.
+
+\begin{proof}
+% Proof goes here.
+\end{proof}
+
+\end{document}
