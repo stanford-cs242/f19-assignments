@@ -1,0 +1,45 @@
+\documentclass[11pt]{article}
+
+\input{../../../tex/defs.tex}
+
+\begin{document}
+
+\hwtitle
+  {Assignment 2}
+  {Will Crichton (wcrichto)} %% REPLACE THIS WITH YOUR NAME/ID
+
+\problem{Problem 2}
+
+Your answer goes here. Here's an example of writing a lambda calculus expression.
+
+$$
+Y = \fun{f}{\app
+  {(\fun{x}{\app{f}{(\app{x}{x})}})}
+  {(\fun{x}{\app{f}{(\app{x}{x})}})}}
+$$
+
+\problem{Problem 3}
+
+Your answer goes here. Here's the dynamically-scoped untyped lambda calculus operational semantics as examples of writing inference rules.
+
+\begin{mathpar}
+\ir{V-Lam}{ \ }{\val{\fun{x}{e}}}
+
+\ir{D-Var}
+  {\ctx(x) = e}
+  {\dynJC{\steps{x}{e}}}
+
+\ir{D-App$_1$}
+  {\dynJC{\steps{e_1}{e_1'}}}
+  {\dynJC{\steps{\app{e_1}{e_2}}{\app{e_1'}{e_2}}}}
+
+\ir{D-App$_2$}
+  {\dynJ{\ctx, x \rightarrow e_2}{\steps{e_1}{e_1'}}}
+  {\dynJC{\steps{\app{(\fun{x}{e_1})}{e_2}}{\app{(\fun{x}{e_1'})}{e_2}}}}
+
+\ir{D-App$_3$}
+  {\val{e_1}}
+  {\dynJC{\steps{\app{(\fun{x}{e_1})}{e_2}}{e_1}}}
+\end{mathpar}
+
+\end{document}

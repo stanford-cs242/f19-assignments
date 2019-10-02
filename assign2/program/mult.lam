@@ -1,0 +1,15 @@
+z = fun f -> fun x -> x
+s = fun n -> fun f -> fun x -> f (n f x)
+plus = fun m -> fun n -> m s n
+mult = fun m -> fun n -> (* fill this in - tests are below *)
+
+mult z z
+mult (s z) (s z)
+mult (s z) (s (s z))
+mult (s z) (s (s (s z)))
+mult (s (s z)) (s (s (s z)))
+mult z (s (s (s z)))
+mult (s (s z)) (mult (s (s z)) (s (s z)))
+
+ten = (s (s (s (s (s (s (s (s (s (s z))))))))))
+mult ten ten

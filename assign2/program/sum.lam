@@ -1,0 +1,22 @@
+z = fun f -> fun x -> x
+s = fun n -> fun f -> fun x -> f (n f x)
+pred = fun n -> fun f -> fun x -> n (fun g -> fun h -> h (g f)) (fun u -> x) (fun u -> u)
+
+plus = fun m -> fun n -> n s m
+
+true = fun a -> fun b -> a
+false = fun a -> fun b -> b
+if = fun p -> fun a -> fun b -> p a b
+
+fix = fun f -> (fun x -> f (x x)) (fun x -> f (x x))
+
+iszero = (* you might find it useful to define this helper function *)
+sum = (* put your answer here! *)
+
+sum z
+sum (s z)
+sum (s (s z))
+
+sum (s (s (s (s (s z)))))
+
+sum (s (s (s (s (s (s (s (s (s (s z))))))))))
