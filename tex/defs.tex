@@ -39,10 +39,11 @@
 
 % Typed lambda calculus - expressions
 \newcommand{\funt}[3]{\lambda ~ ({#1} : {#2}) ~ . ~ {#3}}
+\newcommand{\ift}[3]{\msf{if} ~ {#1} ~ \msf{then} ~ {#2} ~ \msf{else} ~ {#3}}
+\newcommand{\rec}[5]{\msf{rec}(#1; ~ #2.#3.#4)(#5)}
 \newcommand{\lett}[4]{\msf{let} ~ \hasType{#1}{#2} = {#3} ~ \msf{in} ~ {#4}}
 \newcommand{\falset}{\msf{false}}
 \newcommand{\truet}{\msf{true}}
-\newcommand{\rec}[3]{\msf{rec}(#1; ~ x.y.#2)(#3)}
 \newcommand{\case}[5]{\msf{case} ~ {#1} ~ \{ L({#2}) \to {#3} \mid R({#4}) \to {#5} \}}
 \newcommand{\pair}[2]{({#1},{#2})}
 \newcommand{\proj}[2]{{#1} . {#2}}
