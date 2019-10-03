@@ -10,36 +10,85 @@
 
 \problem{Problem 2}
 
-Your answer goes here. Here's an example of writing a lambda calculus expression.
+\textbf{Part 1:}
 
-$$
-Y = \fun{f}{\app
-  {(\fun{x}{\app{f}{(\app{x}{x})}})}
-  {(\fun{x}{\app{f}{(\app{x}{x})}})}}
-$$
+\begin{mathpar}
+\text{Step 1:}\qquad
+\ir{D-App-Body}
+  {\ir{D-App-Lam}
+    {\ir{D-App-Done}
+      {\ir{D-Lam}{ \ }{\val{\fun{\_}{x}}}}
+      {\dynJ{\{x \rightarrow D\}}{\steps
+        {\app{(\fun{x}{\fun{\_}{x}})}{L}}
+        {\fun{\_}{x}}}}}
+    {\dynJ{\{x \rightarrow D\}}{\steps
+      {\app{\app{(\fun{x}{\fun{\_}{x}})}{L}}{*}}
+      {\app{(\fun{\_}{x})}{*}}}}}
+  {\dynJ{\varnothing}{\steps
+    {\app{(\fun{x}{\app{\app{(\fun{x}{\fun{\_}{x}})}{L}}{*}})}{D}}
+    {\app{(\fun{x}{\app{(\fun{\_}{x})}{*}})}{D}}}}
+\end{mathpar}
+
+Fill in the remaining steps here.
+
+\textbf{Part 2:}
+
+Here's examples of how to LaTeX the existing dynamically-scoped lambda calculus rules. Delete them before you submit.
+
+\begin{mathpar}
+\ir{D-Lam}{ \ }{\val{\fun{x}{e}}}
+
+\ir{D-Var}
+  {x \rightarrow e \in \ctx}
+  {\dynJC{\steps{x}{e}}}
+
+\ir{D-App-Lam}
+  {\dynJC{\steps{e_\msf{lam}}{e_\msf{lam}'}}}
+  {\dynJC{\steps{\app{e_\msf{lam}}{e_\msf{arg}}}{\app{e_\msf{lam}'}{e_\msf{arg}}}}}
+
+\ir{D-App-Body}
+  {\dynJ{\ctx, x \rightarrow e_\msf{arg}}{\steps{e_\msf{body}}{e_\msf{body}'}}}
+  {\dynJC{\steps{\app{(\fun{x}{e_\msf{body}})}{e_\msf{arg}}}{\app{(\fun{x}{e_\msf{body}'})}{e_\msf{arg}}}}} \s
+
+\ir{D-App-Done}
+  {\val{e_\msf{body}}}
+  {\dynJC{\steps{\app{(\fun{x}{e_\msf{body}})}{e_\msf{arg}}}{e_\msf{body}}}}
+\end{mathpar}
+
+\newpage
 
 \problem{Problem 3}
 
-Your answer goes here. Here's the dynamically-scoped untyped lambda calculus operational semantics as examples of writing inference rules.
+Here are examples using the let and rec syntax inside the provided inference rules. Delete them before you submit.
 
 \begin{mathpar}
-\ir{V-Lam}{ \ }{\val{\fun{x}{e}}}
+\ir{T-Let}{\typeJ{\ctx,\hasType{x}{\tau_\msf{var}}}{e_\msf{body}}{\tau_\msf{body}}}{\typeJC{(\lett{x}{\tau_\msf{var}}{e_\msf{var}}{e_\msf{body}})}{\tau_\msf{body}}} \\
 
-\ir{D-Var}
-  {\ctx(x) = e}
-  {\dynJC{\steps{x}{e}}}
+\ir{D-Let}{\ }{\steps{\lett{x}{\tau}{e_\msf{var}}{e_\msf{body}}}{\subst{x}{e_\msf{var}}{e_\msf{body}}}}
 
-\ir{D-App$_1$}
-  {\dynJC{\steps{e_1}{e_1'}}}
-  {\dynJC{\steps{\app{e_1}{e_2}}{\app{e_1'}{e_2}}}}
+\ir{T-Rec}
+  {\typeJC{e_\msf{arg}}{\tnum} \\ \typeJC{e_\msf{base}}{\tau} \\
+   \typeJ{\ctx,\hasType{x_\msf{num}}{\tnum},\hasType{x_\msf{acc}}{\tau}}{e_\msf{acc}}{\tau}}
+  {\typeJC{\rec{e_\msf{base}}{x_\msf{num}}{x_\msf{acc}}{e_\msf{acc}}{e_\msf{arg}}}{\tau}}
 
-\ir{D-App$_2$}
-  {\dynJ{\ctx, x \rightarrow e_2}{\steps{e_1}{e_1'}}}
-  {\dynJC{\steps{\app{(\fun{x}{e_1})}{e_2}}{\app{(\fun{x}{e_1'})}{e_2}}}}
+\ir{D-Rec-Step}
+  {\steps{e}{e'}}
+  {\steps
+    {\rec{e_\msf{base}}{x_\msf{num}}{x_\msf{acc}}{e_\msf{acc}}{e}}
+    {\rec{e_\msf{base}}{x_\msf{num}}{x_\msf{acc}}{e_\msf{acc}}{e'}}}
 
-\ir{D-App$_3$}
-  {\val{e_1}}
-  {\dynJC{\steps{\app{(\fun{x}{e_1})}{e_2}}{e_1}}}
+\ir{D-Rec-Base}
+  {\ }
+  {\steps
+    {\rec{e_\msf{base}}{x_\msf{num}}{x_\msf{acc}}{e_\msf{acc}}{0}}
+    {e_\msf{base}}}
+
+\ir{D-Rec-Dec}
+  {n >0}
+  {\steps
+    {\rec{e_\msf{base}}{x_\msf{num}}{x_\msf{acc}}{e_\msf{acc}}{n}}
+    {[x_\msf{num} \rightarrow n, x_\msf{acc} \rightarrow \rec{e_\msf{base}}{x_\msf{num}}{x_\msf{acc}}{e_\msf{acc}}{n-1}] \ e_\msf{acc}}}
 \end{mathpar}
+
 
 \end{document}
