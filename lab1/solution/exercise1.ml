@@ -13,11 +13,11 @@ let main () =
   assert (gcd 48 18 = 6);
 
   let rec fizz_buzz (n : int) : unit =
-    if n mod 3 = 0 && n mod 5 = 0 then Printf.printf "Fizzbuzz\n"
-    else if n mod 3 = 0 then Printf.printf "Fizz;"
-    else if n mod 5 = 0 then Printf.printf "Buzz";
-
-    if n > 0 then fizz_buzz (n - 1)
+    if n > 0 then
+      (fizz_buzz (n - 1);
+       if n mod 3 = 0 && n mod 5 = 0 then Printf.printf "Fizzbuzz\n"
+       else if n mod 3 = 0 then Printf.printf "Fizz;"
+       else if n mod 5 = 0 then Printf.printf "Buzz")
     else ()
   in
 
