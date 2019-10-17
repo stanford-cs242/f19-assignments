@@ -1,0 +1,4 @@
+letrec fact : num -> num = fun (n : num) ->
+  if n = 0 then 1 else n * (fact (n - 1))
+in
+  fact 5

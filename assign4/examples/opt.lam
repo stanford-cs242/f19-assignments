@@ -1,0 +1,8 @@
+let none : forall a . unit + a = tyfun a -> (inj () = L as unit + a) in
+let some : forall a . a -> (unit + a) =
+  tyfun a -> fun (x : a) -> (inj x = R as unit + a)
+in
+case (some [num] 1) {
+  L(x) -> 0
+| R(n) -> n + 1
+}

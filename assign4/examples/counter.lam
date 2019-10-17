@@ -1,0 +1,8 @@
+letrec constr : num -> (rec a . num * (unit -> a)) =
+  fun (x : num) ->
+    fold (x, fun (u : a) -> constr (x + 1))
+    as rec a . num * (unit -> a)
+in
+let c1 : rec a . num * (unit -> a) = (constr 1) in
+let c2 : rec a . num * (unit -> a) = ((unfold c1).R ()) in
+(unfold c2).L

@@ -1,0 +1,5 @@
+let x : rec a . num * (a -> num) =
+  fold (0, fun (o : rec a . num * (a -> num)) -> (unfold o).L)
+  as rec a . num * (a -> num)
+in
+(unfold x).L

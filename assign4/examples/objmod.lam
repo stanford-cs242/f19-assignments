@@ -1,0 +1,9 @@
+let m : exists b . rec a . b * (a -> num) =
+  export (fold (0, fun (o : rec a . num * (a -> num)) -> (unfold o).L)
+          as rec a . num * (a -> num))
+  without num as exists b . rec a . b * (a -> num)
+in
+import (m2, a) = m in
+let x : a = (unfold m2).L in
+let n : num = ((unfold m2).R m2) in
+n

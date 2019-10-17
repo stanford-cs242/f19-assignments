@@ -1,0 +1,2 @@
+let f : num -> num -> num = fun (x : num) -> fun (x : num) -> x in
+(f 0) 1
