@@ -58,7 +58,7 @@ if __name__ == '__main__':
         type=os.path.abspath, help='Directory containing test files (should be .lam files)')
     parser.add_argument('--interpreter', default=os.path.join(BASE_DIR, 'main.native'),
         type=os.path.abspath, help='Location of your interpreter')
-    parser.add_argument('--ref_interpreter', default=os.path.join(BASE_DIR, 'reference.byte'),
+    parser.add_argument('--ref_interpreter', default=os.path.join(BASE_DIR, 'reference.sh'),
         type=os.path.abspath, help='Location of reference interpreter')
     parser.add_argument('--outfile', default=None, type=os.path.abspath,
         help='File to print test results to. If None (default), prints to stdout.')
