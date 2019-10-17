@@ -90,21 +90,21 @@ module Expr = struct
       let bstr = match binop with
           Add -> "+" | Sub -> "-" | Mul -> "*" | Div -> "/"
       in
-      Printf.sprintf "%s %s %s" (to_string left) bstr (to_string right)
+      Printf.sprintf "(%s %s %s)" (to_string left) bstr (to_string right)
     | Relop {relop; left; right} ->
       let rstr = match relop with
           Eq -> "=" | Lt -> "<" | Gt -> ">"
       in
-      Printf.sprintf "%s %s %s" (to_string left) rstr (to_string right)
+      Printf.sprintf "(%s %s %s)" (to_string left) rstr (to_string right)
     | True -> "true"
     | False -> "false"
     | If {cond; then_; else_} ->
-      Printf.sprintf "if %s then %s else %s"
+      Printf.sprintf "(if %s then %s else %s)"
         (to_string cond) (to_string then_) (to_string else_)
     | And {left; right} ->
-      Printf.sprintf "%s && %s" (to_string left) (to_string right)
+      Printf.sprintf "(%s && %s)" (to_string left) (to_string right)
     | Or {left; right} ->
-      Printf.sprintf "%s || %s" (to_string left) (to_string right)
+      Printf.sprintf "(%s || %s)" (to_string left) (to_string right)
     | Var x -> x
     | Lam {x; tau; e} ->
       Printf.sprintf "(fun (%s : %s) -> %s)"
@@ -119,10 +119,10 @@ module Expr = struct
       Printf.sprintf "%s.%s" (to_string e) dstr
     | Inject {e; d; tau} ->
       let dstr = match d with Left -> "L" | Right -> "R" in
-      Printf.sprintf "inj %s = %s as %s"
+      Printf.sprintf "(inj %s = %s as %s)"
         (to_string e) dstr (Type.to_string tau)
     | Case {e; xleft; eleft; xright; eright} ->
-      Printf.sprintf "case %s {L(%s) -> %s | R(%s) -> %s"
+      Printf.sprintf "(case %s {L(%s) -> %s | R(%s) -> %s)"
         (to_string e) xleft (to_string eleft) xright (to_string eright)
     | Fix {x; tau; e} ->
       Printf.sprintf "(fix (%s : %s) -> %s)"
@@ -132,14 +132,14 @@ module Expr = struct
     | TyApp {e; tau} ->
       Printf.sprintf "(%s [%s])" (to_string e) (Type.to_string tau)
     | Fold_ {e; tau} ->
-      Printf.sprintf "fold %s as %s" (to_string e) (Type.to_string tau)
+      Printf.sprintf "(fold %s as %s)" (to_string e) (Type.to_string tau)
     | Unfold e ->
-      Printf.sprintf "unfold %s" (to_string e)
+      Printf.sprintf "(unfold %s)" (to_string e)
     | Export {e; tau_adt; tau_mod} ->
-      Printf.sprintf "export %s without %s as %s"
+      Printf.sprintf "(export %s without %s as %s)"
         (to_string e) (Type.to_string tau_adt) (Type.to_string tau_mod)
     | Import {x; a; e_mod; e_body} ->
-      Printf.sprintf "import (%s, %s) = %s in %s"
+      Printf.sprintf "(import (%s, %s) = %s in %s)"
         x a (to_string e_mod) (to_string e_body)
 
   let to_string_sexp e =
