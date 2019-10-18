@@ -40,7 +40,7 @@ module Type = struct
       | (Exists x, Exists y) -> aux x.tau y.tau
       | _ -> false
     in
-    aux tau1 tau2
+    aux (to_debruijn tau1) (to_debruijn tau2)
 
   let inline_tests () =
     let p = Parser.parse_type_exn in
