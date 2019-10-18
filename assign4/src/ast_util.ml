@@ -160,8 +160,6 @@ module Expr = struct
 
     assert (aequiv (p "fun (x : num) -> x") (p "fun (y : num) -> y"));
 
-    assert (not (aequiv (p "fun (x : bool) -> x") (p "fun (y : num) -> y")));
-
     assert (not (aequiv (p "fun (x : num) -> fun (x : num) -> x + x")
                    (p "fun (x : num) -> fun (y : num) -> y + x")));
 
