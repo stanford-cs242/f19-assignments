@@ -8,9 +8,6 @@ type outcome =
 
 exception RuntimeError of string
 
-(* You will implement the App, Binop, Pair, Project, Inject, and Case cases
-   below. See the dynamics section for a specification on how the small step
-   semantics should work. *)
 let rec trystep (e : Expr.t) : outcome =
   match e with
   | (Expr.Lam _ | Expr.Num _ | Expr.True | Expr.False | Expr.Pair _ | Expr.Unit

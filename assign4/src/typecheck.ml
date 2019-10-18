@@ -5,9 +5,6 @@ open Ast
 
 exception Unimplemented
 
-(* You need to implement the statics for the three remaining cases below,
- * Var, Lam, and App. We have provided you with an implementation for Num
- * and Binop that you may refer to.*)
 let rec typecheck_expr (ctx : Type.t String.Map.t) (e : Expr.t)
   : (Type.t, string) Result.t =
   match e with
