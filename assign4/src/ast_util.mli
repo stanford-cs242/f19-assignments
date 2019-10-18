@@ -15,7 +15,5 @@ module Expr : sig
 
   val aequiv : t -> t -> bool
 
-  val type_substitute : string -> Ast.Type.t -> t -> t
-
   val substitute : string -> t -> t -> t
 end

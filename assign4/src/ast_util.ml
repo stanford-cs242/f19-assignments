@@ -103,43 +103,6 @@ module Expr = struct
     in
     aux String.Map.empty e
 
-  let rec type_substitute (a : string) (tau : Ast.Type.t) (e : t) : t =
-    let ty_sub = Type.substitute a tau in
-    let sub = type_substitute a tau in
-    match e with
-    | Num _ | Var _ -> e
-    | Binop {binop; left; right} -> Binop {
-      binop = binop; left = sub left; right = sub right}
-    | True -> True | False -> False
-    | If {cond; then_; else_} ->
-      If {cond = sub cond; then_ = sub then_; else_ = sub else_}
-    | Relop {relop; left; right} ->
-      Relop {relop = relop; left = sub left; right = sub right}
-    | And {left; right} -> And {left = sub left; right = sub right}
-    | Or {left; right} -> Or {left = sub left; right = sub right}
-    | Lam {x = x'; tau; e = body} ->
-      Lam {x = x'; tau = ty_sub tau; e = sub body}
-    | App {arg; lam} -> App {arg = sub arg; lam = sub lam}
-    | Unit -> Unit
-    | Pair {left; right} -> Pair {left = sub left; right = sub right}
-    | Project {e; d} -> Project {e = sub e; d}
-    | Inject {e; d; tau} -> Inject {e = sub e; d; tau = ty_sub tau}
-    | Case {e; xleft; eleft; xright; eright} ->
-      Case {e = sub e;
-            xleft; eleft = sub eleft;
-            xright; eright = sub eright}
-    | Fix {x = x'; tau; e = e'} ->
-      Fix {x = x'; tau =ty_sub tau; e = sub e'}
-    | TyLam {a; e} -> TyLam {a; e = sub e}
-    | TyApp {e; tau} -> TyApp {e = sub e; tau = ty_sub tau}
-    | Fold_ {e; tau} -> Fold_ {e = sub e; tau = ty_sub tau}
-    | Unfold e -> Unfold (sub e)
-    | Export {e; tau_adt; tau_mod} ->
-      Export {e = sub e; tau_adt = ty_sub tau_adt; tau_mod = ty_sub tau_mod}
-    | Import {x = x'; a; e_mod; e_body} ->
-      Import {x = x'; a; e_mod = sub e_mod;
-              e_body = sub e_body}
-
   let aequiv (e1 : t) (e2 : t) : bool =
     let rec aux (e1 : t) (e2 : t) : bool =
       match (e1, e2) with
@@ -157,7 +120,7 @@ module Expr = struct
       | (Or l, Or r) ->
         aux l.left r.left && aux l.right r.right
       | (Lam l, Lam r) ->
-        Type.aequiv l.tau r.tau && aux l.e r.e
+        aux l.e r.e
       | (App l, App r) ->
         aux l.lam r.lam && aux l.arg r.arg
       | (Unit, Unit) -> true
@@ -166,12 +129,12 @@ module Expr = struct
       | (Project l, Project r) ->
         aux l.e r.e && l.d = r.d
       | (Inject l, Inject r) ->
-        aux l.e r.e && l.d = r.d && Type.aequiv l.tau r.tau
+        aux l.e r.e && l.d = r.d
       | (Case l, Case r) ->
         aux l.e r.e && aux l.eleft r.eleft && aux l.eright r.eright
-      | (Fix l, Fix r) -> Type.aequiv l.tau r.tau && aux l.e r.e
+      | (Fix l, Fix r) -> aux l.e r.e
       | (TyLam l, TyLam r) ->
-        aux l.e (type_substitute r.a (Ast.Type.Var l.a) r.e)
+        aux l.e r.e
       | (TyApp l, TyApp r) -> aux l.e r.e
       | (Fold_ l, Fold_ r) -> aux l.e r.e
       | (Unfold l, Unfold r) -> aux l r
