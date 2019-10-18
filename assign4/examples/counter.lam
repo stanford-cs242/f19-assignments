@@ -1,6 +1,6 @@
 letrec constr : num -> (rec a . num * (unit -> a)) =
   fun (x : num) ->
-    fold (x, fun (u : a) -> constr (x + 1))
+    fold (x, fun (u : unit) -> constr (x + 1))
     as rec a . num * (unit -> a)
 in
 let c1 : rec a . num * (unit -> a) = (constr 1) in
