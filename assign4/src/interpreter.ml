@@ -39,7 +39,7 @@ let rec eval e =
   | Step e' ->
     (if extra_verbose () then
        Printf.printf "Stepped:\n%s\n|->\n%s\n\n"
-         (Expr.to_string e) (Expr.to_string e));
+         (Expr.to_string e) (Expr.to_string e'));
     eval e'
   | Val -> Ok e
 
