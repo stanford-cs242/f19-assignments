@@ -1,2 +1,2 @@
 #!/bin/bash
-ocamlrun reference.byte $*
+ocamlrun reference.byte "$@"
