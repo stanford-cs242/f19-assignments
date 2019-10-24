@@ -1,0 +1,113 @@
+\documentclass[11pt]{article}
+
+\input{../../../tex/defs.tex}
+
+%%%% Useful syntax commands:
+
+% \wci - \mathsf{instrs}
+% \wcs - \mathsf{stack}
+% \wcm - \mathsf{memory}
+% \wcl - \mathsf{locals}
+
+% For example, you can define a configuration as:
+% \{\wci{:}~e^*; ~\wcs{:}~n_\wcs^*; ~\wcm{:}~n_\wcm^*; ~\wcl{:}~n_\wcl^*\}
+
+% Each WebAssembly instruction, including the new ones, has a corresponding macro:
+% \wconst{n}
+% \wbinop{\oplus}
+% \wblock{e^*}
+% \wloop{e^*}
+% \wbr{i}
+% \wbrif{i}
+% \wlabel{e_\msf{cont}^*}{(n^*; ~e_\msf{body}^*)}
+% \wcall{i}
+% \wif{e_\msf{then}^*}{e_\msf{else}^*}
+% \wfor{e_\msf{init}^*}{e_\msf{cond}^*}{e_\msf{post}^*}{e_\msf{body}^*}
+% \wtry{e_\msf{try}^*}{e_\msf{raise}^*}
+% \wraise
+
+\begin{document}
+
+\hwtitle
+  {Assignment 5}
+  {Will Crichton (wcrichto)} %% REPLACE THIS WITH YOUR NAME/ID
+
+% Here's some complete examples of Latexing with WebAssembly.
+% Please delete this before submitting your homework.
+
+\begin{mathpar}
+\ir{D-Const}
+  {\ }
+  {\wsteps
+    {\wcs{:}~n^*; ~\wci{:}~(\wconst{n'}),e^*}
+    {\wcs{:}~n',n^*; ~\wci{:}~e^*}}
+
+\ir{D-Binop}
+  {n' = n_L~\oplus~n_R}
+  {\wsteps
+    {\wcs{:}~n_L,n_R; ~\wci{:}~\wbinop{\oplus}}
+    {\wcs{:}~n'}}
+
+\ir{D-Label-Step}
+  {\wsteps
+    {C~\with~\wci{:}~e_\msf{body}^*; ~\wcs{:}~n^*}
+    {C'~\with~\wci{:}~e_\msf{body}'^*; ~\wcs{:}~n'^*}}
+  {\wsteps
+    {C~\with~\wci{:}~\wlabel{e_\msf{cont}^*}{(n^*;~e_\msf{body}^*)}}
+    {C'~\with~\wci{:}~\wlabel{e_\msf{cont}^*}{(n'^*;~e_\msf{body}'^*)}}}
+
+\ir{T-Const}
+  {\ }
+  {\typeJC{\wconst{n}}{\tfun{\eps}{\msf{i32}}}}
+
+\ir{T-Binop}
+  {\ }
+  {\typeJC{\wbinop{\oplus}}{\tfun{\msf{i32}, \msf{i32}}{\msf{i32}}}}
+
+\ir{T-Loop}
+  {\typeJC{e^*}{\tfun{\eps}{\eps}}}
+  {\typeJC{\wloop{e^*}}{\tfun{\eps}{\eps}}}
+
+\ir{T-Block}
+  {\typeJC{e^*}{\tfun{\eps}{\eps}}}
+  {\typeJC{\wblock{e^*}}{\tfun{\eps}{\eps}}}
+\end{mathpar}
+
+\problem{Problem 2}
+
+Part 1:
+
+\begin{mathpar}
+% Your answer here
+\end{mathpar}
+
+Part 2:
+
+\begin{mathpar}
+% Your answer here
+\end{mathpar}
+
+Part 3:
+
+\begin{mathpar}
+% Your answer here
+\end{mathpar}
+
+\problem{Problem 3}
+
+Part 1:
+
+\begin{enumerate}
+\item \textbf{Undefined behavior:} % Your answer here
+\item \textbf{Private function call:} % Your answer here
+\end{enumerate}
+
+Part 2:
+
+\begin{enumerate}
+\item \textbf{Undefined behavior:} % Your answer here
+\item \textbf{Private function call:} % Your answer here
+\end{enumerate}
+
+
+\end{document}
