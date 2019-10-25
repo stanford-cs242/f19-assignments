@@ -72,32 +72,39 @@
 \newcommand{\wbinop}[1]{\msf{i32}.{#1}}
 \newcommand{\wgetlocal}[1]{\msf{get\_local}~{#1}}
 \newcommand{\wsetlocal}[1]{\msf{set\_local}~{#1}}
+\newcommand{\wgetglobal}[1]{\msf{get\_global}~{#1}}
+\newcommand{\wsetglobal}[1]{\msf{set\_global}~{#1}}
 \newcommand{\wload}{\msf{i32.load}}
 \newcommand{\wstore}{\msf{i32.store}}
 \newcommand{\wsize}{\msf{memory.size}}
 \newcommand{\wgrow}{\msf{memory.grow}}
 \newcommand{\wunreachable}{\msf{unreachable}}
 \newcommand{\wblock}[1]{\msf{block}~{#1}}
-\newcommand{\wblockr}[2]{\msf{block}~{#1}~{#2}}
 \newcommand{\wloop}[1]{\msf{loop}~{#1}}
 \newcommand{\wbr}[1]{\msf{br}~{#1}}
 \newcommand{\wbrif}[1]{\msf{br\_if}~{#1}}
 \newcommand{\wreturn}{\msf{return}}
 \newcommand{\wcall}[1]{\msf{call}~{#1}}
 \newcommand{\wlabel}[2]{\msf{label}~\{#1\}~{#2}}
-\newcommand{\wframe}[1]{\msf{frame}~{#1}}
+\newcommand{\wframe}[2]{\msf{frame}~({#1}, {#2})}
 \newcommand{\wtrapping}{\msf{trapping}}
 \newcommand{\wbreaking}[1]{\msf{breaking}~{#1}}
 \newcommand{\wreturning}[1]{\msf{returning}~{#1}}
-\newcommand{\wconfig}[5]{\{\msf{module}~{#1};~\msf{mem}~{#2};~\msf{locals}~{#3};~\msf{stack}~{#4};~\msf{instrs}~{#5}\}}
-\newcommand{\wfunc}[3]{\{\msf{params}~{#1};~\msf{locals}~{#2};~\msf{body}~{#3}\}}
-\newcommand{\wmodule}[1]{\{\msf{funcs}~{#1}\}}
+\newcommand{\wconfig}[5]{\{\msf{module}{:}~{#1};~\msf{mem}{:}~{#2};~\msf{locals}{:}~{#3};~\msf{stack}{:}~{#4};~\msf{instrs}{:}~{#5}\}}
+\newcommand{\wfunc}[4]{\{\msf{params}{:}~{#1};~\msf{locals}{:}~{#2};~\msf{return}~{#3};~\msf{body}{:}~{#4}\}}
+\newcommand{\wmodule}[1]{\{\msf{funcs}{:}~{#1}\}}
+\newcommand{\wcg}{\msf{globals}}
+\newcommand{\wcf}{\msf{funcs}}
 \newcommand{\wci}{\msf{instrs}}
 \newcommand{\wcs}{\msf{stack}}
 \newcommand{\wcl}{\msf{locals}}
 \newcommand{\wcm}{\msf{mem}}
 \newcommand{\wcmod}{\msf{module}}
 \newcommand{\wsteps}[2]{\steps{\brc{#1}}{\brc{#2}}}
+\newcommand{\with}{\underline{\msf{with}}}
+\newcommand{\wvalid}[2]{{#1} \vdash {#2}~\msf{valid}}
+\newcommand{\wif}[2]{\msf{if}~{#1}~{\msf{else}}~{#2}}
+\newcommand{\wfor}[4]{\msf{for}~(\msf{init}~{#1})~(\msf{cond}~{#2})~(\msf{post}~{#3})~{#4}}
 % assign4.3 custom
 \newcommand{\wtry}[2]{\msf{try}~{#1}~\msf{catch}~{#2}}
 \newcommand{\wraise}{\msf{raise}}
