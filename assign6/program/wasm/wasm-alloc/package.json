@@ -1,0 +1,15 @@
+{
+  "name": "wasm-alloc",
+  "collaborators": [
+    "Will Crichton <wcrichto@cs.stanford.edu>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "wasm_alloc_bg.wasm",
+    "wasm_alloc.js",
+    "wasm_alloc.d.ts"
+  ],
+  "module": "wasm_alloc.js",
+  "types": "wasm_alloc.d.ts",
+  "sideEffects": "false"
+}

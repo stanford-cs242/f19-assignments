@@ -1,0 +1,49 @@
+\documentclass[11pt]{article}
+
+\input{../../tex/defs.tex}
+
+\newcommand{\lfun}[3]{\text{\textexclamdown}\lambda~{#1}:{#2}~.~{#3}}
+\newcommand{\lapp}[2]{\text{\textexclamdown}{#1}~{#2}}
+\newcommand{\lprim}[2]{\text{\textexclamdown}{#1}~{#2}}
+\newcommand{\lcase}[2]{\mathsf{case}~{#1}~\mathsf{of}~{#2}}
+\newcommand{\ltyprim}[1]{\text{\textexclamdown}\msf{#1}}
+\newcommand{\ltyfun}[2]{{#1} \multimap {#2}}
+\newcommand{\sconcat}[2]{{#1} {}^\wedge {#2}}
+\newcommand{\sreturn}[1]{\msf{return}~{#1}}
+\newcommand{\validJ}[2]{{#1} \vdash {#2} ~ \msf{valid}}
+\newcommand{\validJC}[1]{\ctx \vdash {#1} ~ \msf{valid}}
+
+\begin{document}
+
+\hwtitle
+  {Assignment 6}
+  {Will Crichton (wcrichto)} %% REPLACE THIS WITH YOUR NAME/ID
+
+\problem{Problem 1.1}
+
+\begin{enumerate}
+\item % Your answer to 1.1.1 here
+
+\item
+  \begin{enumerate} % Your answers to 1.1.2 here
+    \item
+    \item
+    \item
+    \item
+  \end{enumerate}
+\end{enumerate}
+
+% Here's some examples of Latexing with Wadler's linear types.
+% DELETE THESE BEFORE SUBMITTING
+\begin{align*}
+&\lfun{x}{\ltyprim{Bool}}{\ltyprim{True}} \\
+&\lfun {x}{\ltyprim{Bool}}{(\lcase{x}{
+  \ltyprim{True} \rightarrow \ltyprim{False} \mid \ltyprim{False} \rightarrow \ltyprim{True}})} \\
+&\lfun {x}{\ltyprim{Bool}}{(\lcase{x}{
+  \ltyprim{True} \rightarrow x \mid \ltyprim{False} \rightarrow \ltyprim{True}})} \\
+&\lfun{l}{\ltyprim{List}}{
+  \lfun{f}{\ltyfun{\ltyprim{Val}}{\ltyprim{Val}}}
+  {\lcase{l}{\ltyprim{Nil} \rightarrow \ltyprim{Nil} \mid \ltyprim{Cons}~x~l' \rightarrow \ltyprim{Cons}~(\lapp{f}{x})~l'}}}
+\end{align*}
+
+\end{document}

@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "start": "webpack-dev-server -d --open",
+    "build": "webpack",
+    "format": "prettier --write src/**/*.js"
+  },
+  "devDependencies": {
+    "buffer-loader": "^0.1.0",
+    "html-webpack-plugin": "^3.2.0",
+    "prettier": "^1.18.2",
+    "wasm-loader": "^1.3.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.9.0"
+  },
+  "dependencies": {
+    "chai": "^4.2.0",
+    "wabt": "^1.0.12",
+    "wasm-alloc": "file:wasm-alloc"
+  }
+}

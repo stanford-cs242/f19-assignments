@@ -1,0 +1,7 @@
+S src
+PKG core
+PKG ppx_let
+PKG base
+PKG ppx_jane
+PKG sexplib
+B _build/src
