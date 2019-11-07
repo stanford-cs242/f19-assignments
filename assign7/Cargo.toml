@@ -1,0 +1,12 @@
+[package]
+name = "assign7"
+version = "0.1.0"
+authors = ["Will Crichton <wcrichto@cs.stanford.edu>"]
+
+[dependencies]
+take_mut = "0.2.2"
+tempfile = "3"
+
+[lib]
+name = "lib"
+path = "src/lib.rs"
