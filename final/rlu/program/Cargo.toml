@@ -1,0 +1,9 @@
+[package]
+name = "rlu"
+version = "0.1.0"
+authors = ["Will Crichton <wcrichto@cs.stanford.edu>"]
+edition = "2018"
+
+[dependencies]
+rand = "0.6.5"
+clap = "2.33.0"
