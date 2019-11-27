@@ -29,7 +29,7 @@ module Expr = struct
   [@@deriving variants, sexp_of, sexp, compare]
 
 
-  type builtin_func = Numrows | Numcols | Addrow | Addcol
+  type builtin_func = Numrows | Numcols | Addrow | Addcol | Sum
   [@@deriving variants, sexp_of, sexp, compare]
 
   type t =
@@ -69,6 +69,7 @@ module Expr = struct
       let bstr = match builtin with
         | Numrows -> "numrows" | Numcols -> "numcols"
         | Addrow -> "addrow" | Addcol -> "addcol"
+        | Sum -> "sum"
       in
       Printf.sprintf "%s(%s)" bstr (String.concat ~sep:", " (List.map args
         ~f:to_string))

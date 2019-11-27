@@ -21,7 +21,7 @@ module Expr : sig
   [@@deriving variants, sexp_of, sexp, compare]
 
 
-  type builtin_func = Numrows | Numcols | Addrow | Addcol
+  type builtin_func = Numrows | Numcols | Addrow | Addcol | Sum
   [@@deriving variants, sexp_of, sexp, compare]
 
   type t =

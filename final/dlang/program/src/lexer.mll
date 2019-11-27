@@ -30,6 +30,7 @@ rule token = parse
 | "numcols" { BUILTIN_NUMCOLS }
 | "addrow" { BUILTIN_ADDROW }
 | "addcol" { BUILTIN_ADDCOL }
+| "sum" { BUILTIN_SUM }
 (* To eliminate ambiguity, symbols must be defined after other keywords *)
 | ['a'-'z''A'-'Z']['a'-'z''A'-'Z''0'-'9''_']* as s { SYMBOL s }
 (* To eliminate ambiguity, we must define floats before ints as the float pattern fully contains the int pattern. *)

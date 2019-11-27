@@ -16,56 +16,32 @@ def compiler_bin(pytestconfig):
 
 
 class TestDLangBaseTypecheckerSuccess:
+    @pytest.mark.parametrize("num", ["1", "1.", "1.0", "1.01", "1.2343"])
+    def test_nums(self, compiler_bin, num):
+        prog = inspect.cleandoc(f'{num};')
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
     @pytest.mark.parametrize("binop", ["+", "*", "/", "-"])
-    def test_binops_scalars(self, compiler_bin, binop):
+    def test_binops_scalar(self, compiler_bin, binop):
         prog = inspect.cleandoc(f'3 {binop} 3;')
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_vectors(self, compiler_bin):
-        prog = inspect.cleandoc('Vector[15, 10, 23, 1];')
+    def test_binops_floats(self, compiler_bin):
+        prog = inspect.cleandoc('3.1 + 3.1;')
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_vectors_with_exprs(self, compiler_bin):
-        prog = inspect.cleandoc('Vector[5 + 5, 5 * 2, 30 - 7, 10 / 10];')
+    def test_binops_mixed_num_types(self, compiler_bin):
+        prog = inspect.cleandoc('3 + 3.1;')
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    @pytest.mark.parametrize("binop", ["+", "*", "/", "-"])
-    def test_binops_vectors(self, compiler_bin, binop):
-        prog = inspect.cleandoc(f'Vector[15, 10] {binop} Vector[15, 10];')
-        assert run(compiler_bin, prog).startswith("SUCCESS")
-
-    def test_col_accessors(self, compiler_bin):
-        prog = inspect.cleandoc("""
-            Vector[15, 10][,1] + 2;
-        """)
-        assert run(compiler_bin, prog).startswith("SUCCESS")
-
-    def test_row_accessors(self, compiler_bin):
-        prog = inspect.cleandoc("""
-            Vector[15, 10][1,] + 2;
-        """)
-        assert run(compiler_bin, prog).startswith("SUCCESS")
-
-    def test_col_accessors_with_exprs(self, compiler_bin):
-        prog = inspect.cleandoc("""
-            Vector[15, 10][,1 / 1] + 2;
-        """)
-        assert run(compiler_bin, prog).startswith("SUCCESS")
-
-    def test_row_accessors_with_exprs(self, compiler_bin):
-        prog = inspect.cleandoc("""
-            Vector[15, 10][1 / 1,] + 2;
-        """)
-        assert run(compiler_bin, prog).startswith("SUCCESS")
-
-    @pytest.mark.parametrize("expr", ["10", "5 + 5", "Vector[10][0]"])
+    @pytest.mark.parametrize("expr", ["10", "5 + 5", "Vector[10.][0]"])
     def test_var(self, compiler_bin, expr):
         prog = inspect.cleandoc(f"""
             x = {expr};
             x + 2;
         """)
 
-    @pytest.mark.parametrize("expr", ["10", "5 + 5", "Vector[10][0]"])
+    @pytest.mark.parametrize("expr", ["10", "5 + 5", "Vector[10.][0,]"])
     def test_var_chaining(self, compiler_bin, expr):
         prog = inspect.cleandoc(f"""
             x = {expr};
@@ -124,7 +100,7 @@ class TestDLangBaseTypecheckerSuccess:
                 a + b[,0] + c[0,] + d;
             }
 
-            f(5 + 5, Vector[10, 20], Vector[10, 20], 1.0) + 10;
+            f(5 + 5, Vector[10., 20.], Vector[10., 20.], 1.0) + 10;
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
@@ -138,7 +114,7 @@ class TestDLangBaseTypecheckerSuccess:
                 a * 2;
             }
 
-            g(f(5 + 5.0, Vector[10, 20], Vector[10, 20])) + g(10.0);
+            f(5 + 5.0, Vector[10., 20.], Vector[10., 20.]) + g(10.0);
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
@@ -152,7 +128,7 @@ class TestDLangBaseTypecheckerSuccess:
                 f(a) + b[,0] + c[0,];
             }
 
-            f(g(5 + 5.0, Vector[10, 20], Vector[10, 20])) + f(10.0);
+            f(g(5 + 5.0, Vector[10., 20.], Vector[10., 20.])) + f(10.0);
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
@@ -179,34 +155,87 @@ class TestDLangBaseTypecheckerSuccess:
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_num_rows(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
-            numrows(Vector[1, 2]);
-        """)
+    def test_vectors(self, compiler_bin):
+        prog = inspect.cleandoc('Vector[15., 10., 23.];')
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_num_cols(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
-            numcols(Vector[1, 2]);
-        """)
+    def test_vectors_all_ints(self, compiler_bin):
+        prog = inspect.cleandoc('Vector[15, 10, 23];')
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_add_rows(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
-            addrow(Vector[0, 0], 0, 0);
-        """)
+    def test_vectors_with_exprs(self, compiler_bin):
+        prog = inspect.cleandoc('Vector[5. + 5.123, 5. * 2.0, 30 - 7, 10. / 10];')
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_add_cols(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
-            addcol(Vector[0, 0], 0, 0);
-        """)
+    @pytest.mark.parametrize("binop", ["+", "*", "/", "-"])
+    def test_binops_vectors(self, compiler_bin, binop):
+        prog = inspect.cleandoc(f'Vector[15., 10.] {binop} Vector[15., 10.];')
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_builtin_return(self, compiler_bin):
+    def test_col_accessors(self, compiler_bin):
         prog = inspect.cleandoc("""
-            t = Vector[5, 6];
-            addcol(t, numrows(t), 7);
+            Vector[15., 10.][,1] + 2;
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    def test_col_accessors_with_exprs(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            Vector[15., 10.][,1 / 1] + 2;
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    def test_row_accessors(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            Vector[15., 10.][1,] + 2;
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    def test_row_accessors_with_exprs(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            Vector[15., 10.][1 / 1,] + 2;
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    @pytest.mark.parametrize("builtin", ["numrows", "numcols", "sum"])
+    def test_single_arg_builtins(self, compiler_bin, builtin):
+        prog = inspect.cleandoc(f"""
+            {builtin}(Vector[1, 2]);
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    @pytest.mark.parametrize("builtin", ["addrow", "addcol"])
+    def test_triple_args_builtins(self, compiler_bin, builtin):
+        prog = inspect.cleandoc(f"""
+            {builtin}(Vector[0, 0], 0, 0);
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    def test_num_rows_num_cols_return(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            def f (a: int) {a;}
+
+            v = Vector[1., 2., 3., 4.];
+            f(numcols(v) + numrows(v));
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    def test_sum_return(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            def f (a: float) {a;}
+
+            v = Vector[1., 2., 3., 4.];
+            f(sum(v));
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    def test_add_row_add_col_return(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            def f (a: Vector) {a;}
+
+            v = Vector[1., 2., 3., 4.];
+            v = addrow(v, 0, 0.);
+            v = addcol(v, 5, 5.);
+            f(v);
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
@@ -227,13 +256,13 @@ class TestDLangBaseTypecheckerSuccess:
 class TestMatrixTypecheckerSuccess:
     def test_matrices(self, compiler_bin):
         prog = inspect.cleandoc("""
-            Matrix[[15, 10, 23, 1], [15, 10, 23, 1]];
+            Matrix[[15., 10.1, 23.123, 1.], [15., 10., 23., 1.]];
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_matrices_all_floats(self, compiler_bin):
+    def test_matrices_all_ints(self, compiler_bin):
         prog = inspect.cleandoc("""
-            Matrix[[15.0, 10.], [15.1, 10.1223]];
+            Matrix[[15, 10], [15, 10]];
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
@@ -245,107 +274,115 @@ class TestMatrixTypecheckerSuccess:
 
     def test_matrices_with_exprs(self, compiler_bin):
         prog = inspect.cleandoc("""
-            Matrix[[5 / 5, 1 + 1], [4 - 1, 2 * 2]];
+            Matrix[[5.12 / 5.12, 1. + 1.0], [4 - 1, 2. * 2]];
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
     @pytest.mark.parametrize("binop", ["+", "*", "/", "-"])
     def test_elemwise_binops_matrices(self, compiler_bin, binop):
         prog = inspect.cleandoc(f"""
-            Matrix[[5, 10], [15, 20]] {binop} Matrix[[5, 10], [15, 20]];
+            Matrix[[5., 10.], [15., 20.]] {binop} Matrix[[5., 10.], [15., 20.]];
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
     @pytest.mark.parametrize("binop", ["@"])
     def test_other_binops_matrices(self, compiler_bin, binop):
         prog = inspect.cleandoc(f"""
-            Matrix[[5, 10], [15, 20]] {binop} Matrix[[5, 10], [15, 20]];
-        """)
-        assert run(compiler_bin, prog).startswith("SUCCESS")
-
-    def test_col_accessors(self, compiler_bin):
-        prog = inspect.cleandoc("""
-            Matrix[[5, 10], [15, 20]][,1] + Vector[100, 100];
+            Matrix[[5., 10.], [15., 20.]] {binop} Matrix[[5., 10.], [15., 20.]];
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
     def test_row_accessors(self, compiler_bin):
         prog = inspect.cleandoc("""
-            Matrix[[5, 10], [15, 20]][1,] + Vector[100, 100];
-        """)
-        assert run(compiler_bin, prog).startswith("SUCCESS")
-
-    def test_elem_accessors(self, compiler_bin):
-        prog = inspect.cleandoc("""
-            Matrix[[5, 10], [15, 20]][1,1] + 2;
-        """)
-        assert run(compiler_bin, prog).startswith("SUCCESS")
-
-    def test_col_accessors_with_exprs(self, compiler_bin):
-        prog = inspect.cleandoc("""
-            Matrix[[5, 10], [15, 20]][,1 / 1] + Vector[100, 100];
+            Matrix[[5., 10.], [15., 20.]][1,] + Vector[100., 100.];
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
     def test_row_accessors_with_exprs(self, compiler_bin):
         prog = inspect.cleandoc("""
-            Matrix[[5, 10], [15, 20]][1 / 1,] + Vector[100, 100];
+            Matrix[[5., 10.], [15., 20.]][1 / 1,] + Vector[100., 100.];
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    def test_col_accessors(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            Matrix[[5., 10.], [15., 20.]][,1] + Vector[100., 100.];
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    def test_col_accessors_with_exprs(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            Matrix[[5., 10.], [15., 20.]][,1 / 1] + Vector[100., 100.];
+        """)
+        assert run(compiler_bin, prog).startswith("SUCCESS")
+
+    def test_elem_accessors(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            Matrix[[5., 10.], [15., 20.]][1,1] + 2.;
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
     def test_elem_accessors_with_exprs(self, compiler_bin):
         prog = inspect.cleandoc("""
-            Matrix[[5, 10], [15, 20]][0 + 1,1 / 1] + 2;
+            Matrix[[5., 10.], [15., 20.]][0 + 1,1 / 1] + 2;
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_num_rows(self, compiler_bin):
+    @pytest.mark.parametrize("builtin", ["numrows", "numcols", "sum"])
+    def test_single_arg_builtins(self, compiler_bin, builtin):
         prog = inspect.cleandoc(f"""
-            numrows(Matrix[[1, 2], [3, 4]]);
+            {builtin}(Matrix[[1., 2.], [3., 4.]]);
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_num_cols(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
-            numcols(Matrix[[1, 2], [3, 4]]);
+    def test_num_rows_num_cols_return(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            def f (a: int) {a;}
+
+            m = Matrix[[1., 2.], [3., 4.]];
+            f(numcols(m) + numrows(m));
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_add_rows(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
-            addrow(Matrix[[1, 2], [3, 4]], 0, Vector[1, 2]);
+    def test_sum_return(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            def f (a: float) {a;}
+
+            m = Matrix[[1., 2.], [3., 4.]];
+            f(sum(m));
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
-    def test_add_cols(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
-            addcol(Matrix[[1, 2], [3, 4]], 0, Vector[1, 2]);
+    def test_add_row_add_col_return(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            def f (a: Matrix) {a;}
+
+            m = Matrix[[1., 2.], [3., 4.]];
+            m = addrow(m, 0, Vector[-1., 0.]);
+            m = addcol(m, 2, Vector[0.1, 2.1, 4.1]);
+            f(m);
         """)
         assert run(compiler_bin, prog).startswith("SUCCESS")
 
 
 class TestDLangBaseTypecheckerError:
-    def test_vectors_bad_elems(self, compiler_bin):
-        prog = inspect.cleandoc('Vector[1, 3, Vector[10]];')
-        assert run(compiler_bin, prog).startswith("TYPE ERROR")
-
     @pytest.mark.parametrize("binop", ["+", "*", "/", "-"])
     def test_mismatched_binop(self, compiler_bin, binop):
         prog = inspect.cleandoc(f'3 {binop} Vector[3];')
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
-    def test_col_accessor_bad_index(self, compiler_bin):
-        prog = inspect.cleandoc(f'Vector[1, 3][,Vector[10]];')
-        assert run(compiler_bin, prog).startswith("TYPE ERROR")
-
-    def test_row_accessor_bad_index(self, compiler_bin):
-        prog = inspect.cleandoc(f'Vector[1, 3][Vector[10],];')
-        assert run(compiler_bin, prog).startswith("TYPE ERROR")
-
     def test_missing_var(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
+        prog = inspect.cleandoc("""
             y = 10;
             x + 2;
+        """)
+        assert run(compiler_bin, prog).startswith("TYPE ERROR")
+
+    def test_missing_var_in_func(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            def f() {
+                y + 2;
+            }
         """)
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
@@ -418,7 +455,7 @@ class TestDLangBaseTypecheckerError:
                 a + b;
             }
 
-            f(1, Vector[10]);
+            f(1, Vector[10.]);
         """)
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
@@ -455,8 +492,38 @@ class TestDLangBaseTypecheckerError:
         """)
         assert run(compiler_bin, prog).startswith('TYPE ERROR')
 
+    def test_duplicated_arg_binding(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            def f(a: int, a: int) {
+                a + a;
+            }
+        """)
+        assert run(compiler_bin, prog).startswith('TYPE ERROR')
+
+    def test_vectors_bad_elems(self, compiler_bin):
+        prog = inspect.cleandoc('Vector[1., 3., Vector[10.]];')
+        assert run(compiler_bin, prog).startswith("TYPE ERROR")
+
+    @pytest.mark.parametrize("idx", ["1.0", "Vector[10.]"])
+    def test_row_accessor_bad_index(self, compiler_bin, idx):
+        prog = inspect.cleandoc(f'Vector[1., 3.][{idx},];')
+        assert run(compiler_bin, prog).startswith("TYPE ERROR")
+
+    @pytest.mark.parametrize("idx", ["1.0", "Vector[10.]"])
+    def test_col_accessor_bad_index(self, compiler_bin, idx):
+        prog = inspect.cleandoc(f'Vector[1., 3.][,{idx}];')
+        assert run(compiler_bin, prog).startswith("TYPE ERROR")
+
+    def test_col_accessor_bad_matrix(self, compiler_bin):
+        prog = inspect.cleandoc('3[,2];')
+        assert run(compiler_bin, prog).startswith("TYPE ERROR")
+
+    def test_row_accessor_bad_matrix(self, compiler_bin):
+        prog = inspect.cleandoc('3[3,];')
+        assert run(compiler_bin, prog).startswith("TYPE ERROR")
+
     @pytest.mark.parametrize("builtin,args", itertools.product(
-        ["numcols", "numrows", "addrow", "addcol"],
+        ["numcols", "numrows", "addrow", "addcol", "sum"],
         [[], ["Vector[1, 2, 3, 4]", "10", "5", "6"]]
     ))
     def test_builtins_bad_arity(self, compiler_bin, builtin, args):
@@ -466,38 +533,56 @@ class TestDLangBaseTypecheckerError:
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
     def test_num_rows_bad_arg_type(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
+        prog = inspect.cleandoc("""
             numrows(2);
         """)
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
     def test_num_cols_bad_arg_type(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
+        prog = inspect.cleandoc("""
             numcols(2);
         """)
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
-    def test_add_row_bad_arg_type(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
-            addrow(Vector[1, 2], 0, Vector[10]);
+    def test_sum_bad_arg_type(self, compiler_bin):
+        prog = inspect.cleandoc("""
+            sum(2);
         """)
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
-    def test_add_col_bad_arg_type(self, compiler_bin):
+    @pytest.mark.parametrize("arg2,arg3", [
+        ("0.0", "0.0"),
+        ("0", "Vector[10.]")
+    ])
+    def test_add_row_bad_arg_type(self, compiler_bin, arg2, arg3):
         prog = inspect.cleandoc(f"""
-            addcol(Vector[1, 2], 0, Vector[10]);
+            addrow(Vector[1., 2.], {arg2}, {arg3});
+        """)
+        assert run(compiler_bin, prog).startswith("TYPE ERROR")
+
+    @pytest.mark.parametrize("arg2,arg3", [
+        ("0.0", "0.0"),
+        ("0", "Vector[10.]")
+    ])
+    def test_add_col_bad_arg_type(self, compiler_bin, arg2, arg3):
+        prog = inspect.cleandoc(f"""
+            addcol(Vector[1., 2.], {arg2}, {arg3});
         """)
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
 
 class TestMatrixTypecheckerError:
-    def test_matrices_bad_elems(self, compiler_bin):
-        prog = inspect.cleandoc("""
-            Matrix[[1, 2], [Matrix[[10]], Vector[10]]];
+    @pytest.mark.parametrize("bad_elem", [
+        "Matrix[[1.,1.]]",
+        "Vector[10.]"
+    ])
+    def test_matrices_bad_elems(self, compiler_bin, bad_elem):
+        prog = inspect.cleandoc(f"""
+            Matrix[[1., 2.], [3., {bad_elem}]];
         """)
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
-    @pytest.mark.parametrize("test_inputs, binop", itertools.product(
+    @pytest.mark.parametrize("test_inputs,binop", itertools.product(
         list(itertools.permutations([
             "3", "Vector[3]", "Matrix[[10, 10], [10, 10]]"
         ], 2)),
@@ -507,21 +592,21 @@ class TestMatrixTypecheckerError:
         prog = inspect.cleandoc(f'{test_inputs[0]} {binop} {test_inputs[1]};')
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
-    def test_elem_accessor_bad_index(self, compiler_bin):
-        prog = inspect.cleandoc("""
-            Matrix[[1], [3]][Vector[10],Matrix[[10]]];
+    @pytest.mark.parametrize("row,col", [
+        ("0.", "0"),
+        ("Vector[10.]", "0"),
+        ("Matrix[[10.]]", "0"),
+        ("0", "0."),
+        ("0", "Vector[10.]"),
+        ("0", "Matrix[[10.]]"),
+    ])
+    def test_elem_accessor_bad_index(self, compiler_bin, row, col):
+        prog = inspect.cleandoc(f"""
+            Matrix[[1], [3]][{row}, {col}];
         """)
         assert run(compiler_bin, prog).startswith("TYPE ERROR")
 
-    def test_col_accessor_bad_matrix(self, compiler_bin):
-        prog = inspect.cleandoc(f'3[,2];')
-        assert run(compiler_bin, prog).startswith("TYPE ERROR")
-
-    def test_row_accessor_bad_matrix(self, compiler_bin):
-        prog = inspect.cleandoc(f'3[3,];')
-        assert run(compiler_bin, prog).startswith("TYPE ERROR")
-
-    @pytest.mark.parametrize("tensor", ["3", "Vector[10, 20, 30]"])
+    @pytest.mark.parametrize("tensor", ["3", "3.0", "Vector[10, 20, 30]"])
     def test_elem_accessor_bad_matrix(self, compiler_bin, tensor):
         prog = inspect.cleandoc(f'{tensor}[3,4];')
         assert run(compiler_bin, prog).startswith("TYPE ERROR")

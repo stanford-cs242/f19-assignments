@@ -17,6 +17,7 @@
 %token BUILTIN_NUMCOLS
 %token BUILTIN_ADDROW
 %token BUILTIN_ADDCOL
+%token BUILTIN_SUM
 %token COLON
 %token SEMICOLON
 %token PLUS
@@ -112,4 +113,5 @@ builtin_func:
 | BUILTIN_NUMCOLS { Expr.Numcols }
 | BUILTIN_ADDROW { Expr.Addrow }
 | BUILTIN_ADDCOL { Expr.Addcol }
+| BUILTIN_SUM { Expr.Sum }
 ;

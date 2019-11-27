@@ -3,6 +3,7 @@ open Core
 open Result.Monad_infix
 open Ast
 open Builtins
+open Utils
 
 exception Unreachable
 
@@ -63,18 +64,18 @@ let rec eval_expr (e : Expr.t) (vctx : var_ctx) (fctx : func_ctx)
     eval_expr idx vctx fctx >>= fun row_val ->
     (match (tensor_val, row_val) with
     | (Expr.Vector col_list, Expr.Int idx) ->
-      if idx >= 0 && idx < Array.length col_list
-      then Ok (Array.get col_list idx)
-      else Error (Printf.sprintf "Row accessor failed: out of bounds")
+      (match array_get col_list idx with
+      | Some vec -> Ok vec
+      | None -> Error (Printf.sprintf "Row accessor failed: out of bounds"))
     | _ -> raise Unreachable)
   | Expr.ColAccessor {tensor; idx} ->
     eval_expr tensor vctx fctx >>= fun tensor_val ->
     eval_expr idx vctx fctx >>= fun col_val ->
     (match (tensor_val, col_val) with
     | (Expr.Vector row_list, Expr.Int idx) ->
-      if idx >= 0 && idx < Array.length row_list
-      then Ok (Array.get row_list idx)
-      else Error (Printf.sprintf "Row accessor failed: out of bounds")
+      (match array_get row_list idx with
+      | Some v -> Ok v
+      | None -> Error (Printf.sprintf "Row accessor failed: out of bounds"))
     | _ -> raise Unreachable)
 
   | Expr.Vector items ->
@@ -122,7 +123,17 @@ let rec eval_expr (e : Expr.t) (vctx : var_ctx) (fctx : func_ctx)
       Ok (numrows tensor)
     | Expr.Numcols -> eval_expr (List.nth_exn args 0) vctx fctx >>= fun tensor ->
       Ok (numcols tensor)
-    | _ -> raise Unreachable)
+    | Expr.Sum -> eval_expr (List.nth_exn args 0) vctx fctx >>= fun tensor ->
+      Ok (sum tensor)
+    | Expr.Addrow
+    | Expr.Addcol as add ->
+      eval_expr (List.nth_exn args 0) vctx fctx >>= fun tensor ->
+      eval_expr (List.nth_exn args 1) vctx fctx >>= fun idx ->
+      eval_expr (List.nth_exn args 2) vctx fctx >>= fun item_to_add ->
+      (match add with
+      | Expr.Addrow -> addrow tensor idx item_to_add
+      | Expr.Addcol -> addcol tensor idx item_to_add)
+    )
 
   | Expr.Var {name} -> Ok (String.Map.find_exn vctx name)
   | Expr.Int _ -> Ok e

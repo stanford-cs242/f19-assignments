@@ -101,6 +101,17 @@ let rec typecheck_expr (e : Expr.t) (vctx : var_ctx) (fctx : func_ctx)
           "Expected types (Vector, int, num) for builtin addrow/addcol, but got (%s, %s, %s)"
           (Type.to_string tau_tensor) (Type.to_string tau_idx)
           (Type.to_string tau_elem)))
+    | Expr.Sum ->
+      if List.length args <> 1
+      then Error (Printf.sprintf
+        "Builtin sum expected 1 argument but got %d args."
+        (List.length args))
+      else typecheck_expr (List.nth_exn args 0) vctx fctx >>= fun tau_tensor ->
+      (match tau_tensor with
+      | Type.Vector -> Ok Type.Float
+      | _ -> Error (Printf.sprintf
+          "Expected type Vector for builtin sum but got %s"
+          (Type.to_string tau_tensor)))
     )
 
   | Expr.Int _ -> Ok Type.Int
@@ -113,7 +124,10 @@ let rec typecheck_stmt (stmt : Stmt.t) (vctx : var_ctx) (fctx : func_ctx)
   : (var_ctx * func_ctx * Type.t option, string) Result.t =
   match stmt with
   | Stmt.FuncDef {name; args = arg_decls; stmt_list} ->
-    let new_vctx = (List.fold arg_decls ~init:vctx ~f:(fun vctx_old (n, t) ->
+    let uniq_names = String.Set.of_list (List.map arg_decls ~f:(fun (n, _) -> n)) in
+    if String.Set.length uniq_names <> List.length arg_decls
+    then Error (Printf.sprintf "Found a duplicate argument name in function declaration for %s" name)
+    else let new_vctx = (List.fold arg_decls ~init:vctx ~f:(fun vctx_old (n, t) ->
       String.Map.set vctx_old ~key:n ~data:t)) in
     let final_res = List.fold stmt_list ~init:(Ok (new_vctx, fctx, None)) ~f:(fun res s ->
       (match res with
