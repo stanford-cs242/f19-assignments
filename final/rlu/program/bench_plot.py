@@ -7,7 +7,7 @@ def main():
     argv = sys.argv[1:]
     nplots = len(argv) // 2
 
-    fig, axes = plt.subplots(1, nplots, sharey=True, figsize=(nplots * 5, 5))
+    fig, axes = plt.subplots(1, nplots, sharey=True, figsize=(nplots * 5, 5), squeeze=False)
 
     for i in range(nplots):
         df = pd.read_csv(argv[i * 2])
@@ -17,7 +17,7 @@ def main():
             values='throughput',
             columns='write_frac',
         )
-        ax = axes[i]
+        ax = axes[0, i]
         df.plot(ax=ax, legend=i == 0)
         ax.set_ylabel('Throughput')
         ax.set_xlabel('Number of threads')
