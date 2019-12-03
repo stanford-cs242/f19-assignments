@@ -122,7 +122,6 @@ class TestAutodiffScalarSuccess:
         prog = inspect.cleandoc("""
             x = 5.;
             backward(x);
-            grad(x);
         """)
         assert run_interpreter(compiler_bin, prog).startswith("SUCCESS:")
 
