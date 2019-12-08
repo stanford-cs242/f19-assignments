@@ -111,7 +111,7 @@ class TestAutodiffScalarLPTError:
         assert run_typechecker(compiler_bin, prog).find("ERROR") != -1
 
     @pytest.mark.parametrize("target", [
-        'sum(Vector[1., 2.])',
+        'sum(Vector[x, 2.])',
         'numcols(Vector[x])',
         'numrows(Vector[x])',
         'addrow(Vector[x], 0, 0.)',
