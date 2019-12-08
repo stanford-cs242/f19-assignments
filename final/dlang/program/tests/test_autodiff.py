@@ -527,7 +527,7 @@ class TestAutodiffTensorElemwiseVectors:
             backward(x);
             grad(x);
         """)
-        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: Vector[5., 5.]")
+        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: Vector[1., 1.]")
 
     @pytest.mark.parametrize("binop,res", [
         ('+', 'Vector[1., 1.]'),
@@ -661,7 +661,7 @@ class TestAutodiffTensorElemwiseMatrices:
             backward(x);
             grad(x);
         """)
-        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:Matrix[[5. 5.],[5.,5.]]")
+        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:Matrix[[1. 1.],[1.,1.]]")
 
     @pytest.mark.parametrize("binop,res", [
         ('+', 'Matrix[[1.,1.],[1.,1.]]'),
