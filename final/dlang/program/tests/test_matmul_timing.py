@@ -17,9 +17,9 @@ def compiler_bin(pytestconfig):
 
 class TestMatmulTiming:
     @pytest.mark.parametrize("input_dim,hidden_dim,output_dim,seconds", [
-        (16, 64, 16, 0.2),
-        (32, 256, 64, 0.5),
-        (64, 768, 256, 1)
+        (16, 64, 16, 0.3),
+        (32, 256, 64, 0.65),
+        (64, 768, 256, 1.2)
     ])
     def test_matmul_timing(self, compiler_bin, input_dim, hidden_dim,
       output_dim, seconds):

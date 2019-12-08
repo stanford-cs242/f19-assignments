@@ -46,7 +46,7 @@ class TestBuiltinsCreation:
             assert match is not None
             assert 0 <= float(match.group(1)) <= dim ** 2
 
-    def test_rand_type(self, compiler_bin):
+    def test_fill_type(self, compiler_bin):
         prog = inspect.cleandoc("""
             def f(a: Matrix) {a[0,0];}
             f(fill(2, 2, 1.0));
@@ -67,7 +67,7 @@ class TestBuiltinsCreation:
     @pytest.mark.parametrize("val", [
         "1",
     ])
-    def test_rand_values(self, compiler_bin, val):
+    def test_fill_values(self, compiler_bin, val):
         dim = 4
         for _ in range(3):  # Perform multiple random trials.
             prog = inspect.cleandoc(f"""
