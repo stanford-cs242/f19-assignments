@@ -28,19 +28,7 @@ struct BenchOpts {
   set_type: SetType
 }
 
-#[derive(Clone, Copy, Default, Debug)]
-struct BenchResult {
-  reads: usize,
-  read_times: u128,
-  inserts: usize,
-  insert_times: u128,
-  deletes: usize,
-  delete_times: u128,
-  ops: usize,
-  op_times: u128,
-}
-
-fn set_readwrite<S>(set: S, opts: BenchOpts) -> BenchResult
+fn set_readwrite<S>(set: S, opts: BenchOpts) -> usize
 where S: ConcurrentSet<usize> + 'static
 {
   let mut rng = SmallRng::from_seed([0; 16]);
@@ -53,57 +41,33 @@ where S: ConcurrentSet<usize> + 'static
     let set = set.clone_ref();
     thread::spawn(move || {
       let mut rng = SmallRng::from_seed([0; 16]);
-      let mut result = BenchResult::default();
       let start = Instant::now();
+      let mut ops = 0;
       loop {
         if start.elapsed().as_millis() >= opts.timeout {
           break;
         }
 
-        let iter_start = Instant::now();
         let i = rng.gen_range(0, opts.range);
         if rng.gen::<f64>() > opts.write_frac {
-          let start = Instant::now();
           set.contains(i);
-          result.reads += 1;
-          result.read_times += start.elapsed().as_nanos();
         } else {
           if rng.gen::<f64>() > opts.insert_frac {
-            let start = Instant::now();
             set.insert(i);
-            result.inserts += 1;
-            result.insert_times += start.elapsed().as_nanos();
           } else {
-            let start = Instant::now();
             set.delete(i);
-            result.deletes += 1;
-            result.delete_times += start.elapsed().as_nanos();
           }
         }
 
-        result.ops += 1;
-        result.op_times += iter_start.elapsed().as_nanos();
+        ops += 1;
       }
 
-      result
+      ops
     })
   };
 
   let threads: Vec<_> = (0..opts.num_threads).map(|_| worker()).collect();
-  threads.into_iter().map(|t| t.join().unwrap()).fold(
-    BenchResult::default(),
-    |mut acc, res| {
-      acc.ops += res.ops;
-      acc.reads += res.reads;
-      acc.inserts += res.inserts;
-      acc.deletes += res.deletes;
-      acc.op_times += res.op_times;
-      acc.read_times += res.read_times;
-      acc.insert_times += res.insert_times;
-      acc.delete_times += res.delete_times;
-      acc
-    },
-  )
+  threads.into_iter().map(|t| t.join().unwrap()).sum()
 }
 
 fn benchmark(opts: BenchOpts) {
@@ -112,7 +76,7 @@ fn benchmark(opts: BenchOpts) {
   for write_frac in &[0.02, 0.2, 0.4] {
     for num_threads in 1..=8 {
       let opts = BenchOpts { write_frac: *write_frac, num_threads, ..opts };
-      let ops: Vec<BenchResult> = (0..opts.num_iters)
+      let ops: Vec<usize> = (0..opts.num_iters)
         .map(|_| {
           match opts.set_type {
             SetType::Rlu => set_readwrite(RluSet::new(), opts),
@@ -121,7 +85,7 @@ fn benchmark(opts: BenchOpts) {
         })
         .collect();
 
-      let avg: f64 = (ops.iter().map(|res| res.ops).sum::<usize>() as f64)
+      let avg: f64 = (ops.iter().sum::<usize>() as f64)
         / (ops.len() as f64);
       let throughput = avg / ((opts.timeout / 1000) as f64);
 
