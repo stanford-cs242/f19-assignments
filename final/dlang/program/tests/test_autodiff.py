@@ -1083,7 +1083,7 @@ class TestAutodiffTensorComposite:
             backward(f(W, X, b));
             sum(grad(W)) + sum(grad(b));
         """)
-        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: 10.0160")
+        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: 10.016")
 
     def test_nested_func_calls(self, compiler_bin):
         prog = inspect.cleandoc("""
