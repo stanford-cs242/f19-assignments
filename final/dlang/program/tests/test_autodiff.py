@@ -661,7 +661,7 @@ class TestAutodiffTensorElemwiseMatrices:
             backward(x);
             grad(x);
         """)
-        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:Matrix[[1. 1.],[1.,1.]]")
+        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:Matrix[[1.,1.],[1.,1.]]")
 
     @pytest.mark.parametrize("binop,res", [
         ('+', 'Matrix[[1.,1.],[1.,1.]]'),
@@ -730,7 +730,7 @@ class TestAutodiffTensorElemwiseMatrices:
             backward(x + y);
             grad(x) + grad(y);
         """)
-        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS: Matrix[[2.]]")
+        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:Matrix[[2.]]")
 
     def test_multiple_dvars_mult(self, compiler_bin):
         prog = inspect.cleandoc("""
@@ -792,35 +792,35 @@ class TestAutodiffTensorAccessorsVectors:
             backward(x[{i},]);
             grad(x);
         """)
-        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: {sol}")
+        assert run_interpreter(compiler_bin, prog).startswith(f"SUCCESS: {sol}")
 
     def test_using_accessors(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
+        prog = inspect.cleandoc("""
             x:track_grad = Vector[1., 2., 3.];
             z = x[0,] + 3 * x[1,] + 5 * x[2,];
             backward(z);
             grad(x);
         """)
-        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: Vector[1, 3, 5]")
+        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: Vector[1., 3., 5.]")
 
     def test_using_accessors_alternate_access(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
+        prog = inspect.cleandoc("""
             x:track_grad = Vector[1., 2., 3.];
             z = x[,0] + 3 * x[,1] + 5 * x[,2];
             backward(z);
             grad(x);
         """)
-        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: Vector[1, 3, 5]")
+        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: Vector[1., 3., 5.]")
 
     def test_using_accessors_with_intermediates(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
+        prog = inspect.cleandoc("""
             x:track_grad = Vector[1., 2., 3.];
             z = x[0,] + 3. * x[1,] + 5. * x[2,];
             y = z + x[2,];
             backward(y);
             grad(x);
         """)
-        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: Vector[1, 3, 6]")
+        assert run_interpreter(compiler_bin, prog).startswith("SUCCESS: Vector[1., 3., 6.]")
 
 
 class TestAutodiffTensorAccessorsMatrices:
@@ -841,7 +841,7 @@ class TestAutodiffTensorAccessorsMatrices:
             backward(x[{i}]);
             grad(x);
         """)
-        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:{sol}")
+        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith(f"SUCCESS:{sol}")
 
     @pytest.mark.parametrize("i,sol", [
         ('0,', 'Matrix[[1.,1.,1.],[0.,0.,0.],[0.,0.,0.]]'),
@@ -854,7 +854,7 @@ class TestAutodiffTensorAccessorsMatrices:
             backward(x[{i}]);
             grad(x);
         """)
-        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:{sol}")
+        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith(f"SUCCESS:{sol}")
 
     @pytest.mark.parametrize("i,sol", [
         (',0', 'Matrix[[1.,0.,0.],[1.,0.,0.],[1.,0.,0.]]'),
@@ -867,10 +867,10 @@ class TestAutodiffTensorAccessorsMatrices:
             backward(x[{i}]);
             grad(x);
         """)
-        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:{sol}")
+        assert "".join(run_interpreter(compiler_bin, prog).split()).startswith(f"SUCCESS:{sol}")
 
     def test_using_elements(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
+        prog = inspect.cleandoc("""
             x:track_grad = Matrix[[1., 2., 3.], [4., 5., 6.], [7., 8., 9.]];
             z = x[0,0] + 2 * x[0,2] + 3 * x[1,1] + 4 * x[1,2] + 5 * x[2,2];
             y = z + x[2,2];
@@ -880,7 +880,7 @@ class TestAutodiffTensorAccessorsMatrices:
         assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:Matrix[[1.,0.,2.],[0.,3.,4.],[0.,0.,6.]]")
 
     def test_using_rows(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
+        prog = inspect.cleandoc("""
             x:track_grad = Matrix[[1., 2., 3.], [4., 5., 6.], [7., 8., 9.]];
             z = x[0,] + Vector[2.,2.,2.] * x[0,] + Vector[3.,3.,3.] * x[1,] + Vector[4.,4.,4.] * x[1,] + Vector[5.,5.,5.] * x[2,];
             y = z + x[2,];
@@ -890,7 +890,7 @@ class TestAutodiffTensorAccessorsMatrices:
         assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:Matrix[[3.,3.,3.],[7.,7.,7.],[6.,6.,6.]]")
 
     def test_using_cols(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
+        prog = inspect.cleandoc("""
             x:track_grad = Matrix[[1., 2., 3.], [4., 5., 6.], [7., 8., 9.]];
             z = x[,0] + Vector[2.,2.,2.] * x[,2] + Vector[3.,3.,3.] * x[,1] + Vector[4.,4.,4.] * x[,2] + Vector[5.,5.,5.] * x[,2];
             y = z + x[,2];
@@ -900,7 +900,7 @@ class TestAutodiffTensorAccessorsMatrices:
         assert "".join(run_interpreter(compiler_bin, prog).split()).startswith("SUCCESS:Matrix[[1.,3.,12.],[1.,3.,12.],[1.,3.,12.]]")
 
     def test_using_all_accessors(self, compiler_bin):
-        prog = inspect.cleandoc(f"""
+        prog = inspect.cleandoc("""
             x:track_grad = Matrix[[1., 2., 3.], [4., 5., 6.], [7., 8., 9.]];
             rows = x[0,] + Vector[2.,2.,2.] * x[0,] + Vector[3.,3.,3.] * x[1,] + Vector[4.,4.,4.] * x[1,] + Vector[5.,5.,5.] * x[2,];
             cols = x[,0] + Vector[2.,2.,2.] * x[,2] + Vector[3.,3.,3.] * x[,1] + Vector[4.,4.,4.] * x[,2] + Vector[5.,5.,5.] * x[,2];
@@ -925,7 +925,7 @@ class TestAutodiffTensorMatrixMultiply:
         ('Matrix[[1.]]', 'Matrix[[2.]]', 'Matrix[[2.]]'),
         ('Matrix[[1.]]', 'Matrix[[2., 3., 4., 5.]]', 'Matrix[[14.]]'),
         ('Matrix[[1., 2., 3.]]', 'Matrix[[2.], [2.], [2.]]', 'Matrix[[2., 2., 2.]]'),
-        ('Matrix[[1.], [2.], [3.]]', 'Matrix[[2., 2., 2.]]', 'Matrix[[6., 6., 6.]]'),
+        ('Matrix[[1.], [2.], [3.]]', 'Matrix[[2., 2., 2.]]', 'Matrix[[6.], [6.], [6.]]'),
     ])
     def test_flat_matrices(self, compiler_bin, m1, m2, res):
         prog = inspect.cleandoc(f"""
@@ -1079,7 +1079,7 @@ class TestAutodiffTensorComposite:
 
             W:track_grad = Matrix[[0., 5.], [10., 2.]];
             X = Matrix[[0.123, 0.1], [0.423, 0.179], [0.246, 0.937]];
-            b = Matrix[[0.1, 0.1], [0.1, 0.1], [0.1, 0.1]];
+            b:track_grad = Matrix[[0.1, 0.1], [0.1, 0.1], [0.1, 0.1]];
             backward(f(W, X, b));
             sum(grad(W)) + sum(grad(b));
         """)

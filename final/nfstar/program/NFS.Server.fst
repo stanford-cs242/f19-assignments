@@ -202,7 +202,7 @@ private let createFile file_path user_id is_dir =
   let users = (intSetToList (intListToSet [0; user_id])) in
   List.iter (fun user ->
     List.iter (fun permission ->
-      setAttr file_path user_id permission
+      setAttr file_path user permission
     ) [Open; Read; Write; AttrModify]
   ) users
 
