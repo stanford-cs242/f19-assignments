@@ -924,8 +924,8 @@ class TestAutodiffTensorMatrixMultiply:
     @pytest.mark.parametrize("m1,m2,res", [
         ('Matrix[[1.]]', 'Matrix[[2.]]', 'Matrix[[2.]]'),
         ('Matrix[[1.]]', 'Matrix[[2., 3., 4., 5.]]', 'Matrix[[14.]]'),
-        ('Matrix[[1., 2., 3.]]', 'Matrix[[2.], [2.], [2.]]', 'Matrix[[2., 2., 2.]]'),
-        ('Matrix[[1.], [2.], [3.]]', 'Matrix[[2., 2., 2.]]', 'Matrix[[6.], [6.], [6.]]'),
+        ('Matrix[[1., 2., 3.]]', 'Matrix[[2.], [2.], [2.]]', 'Matrix[[2.,2.,2.]]'),
+        ('Matrix[[1.], [2.], [3.]]', 'Matrix[[2., 2., 2.]]', 'Matrix[[6.],[6.],[6.]]'),
     ])
     def test_flat_matrices(self, compiler_bin, m1, m2, res):
         prog = inspect.cleandoc(f"""
