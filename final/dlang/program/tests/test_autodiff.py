@@ -124,7 +124,7 @@ class TestAutodiffScalarLPTError:
             x:track_grad = 5;
             backward({target});
         """)
-        assert run_typechecker(compiler_bin, prog).find("ERROR") != -1
+        assert run_interpreter(compiler_bin, prog).find("ERROR") != -1
 
     def test_grad_builtin_bad_target_expr(self, compiler_bin):
         prog = inspect.cleandoc('grad(4 + 6);')
