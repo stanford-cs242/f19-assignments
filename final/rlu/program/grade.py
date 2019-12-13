@@ -1,7 +1,7 @@
 import pandas as pd
 import argparse
 
-GRADE_RANGE = [(.75, 1.), (.50, .8), (.30, .6), (.20, .4)]
+GRADE_RANGE = [(.60, 1.), (.45, .8), (.30, .6), (.20, .4)]
 
 
 def main(studentsol, refsol):
